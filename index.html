@@ -2,26 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>AGE B/R-II Complaint Management</title>
-  <!-- True Vector PDF Generation (~25KB output with selectable text) -->
+  <!-- Vector PDF Generation Libraries (~25KB output with selectable text) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <style>
+    /* ==========================================================================
+       DYNAMIC THEME ENGINE (Apple SF Pro & Soft Neumorphic iOS Glass System)
+       ========================================================================== */
     :root {
-      --theme-primary: #e50914; /* Crimson Red default */
+      --theme-primary: #e50914; /* Crimson Red */
       --theme-primary-dark: #b80710;
       --theme-primary-light: #ff3b30;
-      --theme-surface-bg: #f4f5f8;
+      --theme-surface-bg: #f2f4f7;
       --theme-card-bg: #ffffff;
       --theme-border: #e2e8f0;
-      --theme-text-main: #0b192c;
-      --theme-text-muted: #64748b;
-      --theme-shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+      --theme-text-main: #1c1c1e;
+      --theme-text-muted: #8e8e93;
+      --theme-shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04);
       --radius-card: 20px;
-      --radius-sm: 12px;
+      --radius-sm: 10px;
 
-      /* Physical Print Slip Geometry Constraints */
+      /* Slip Geometry Settings */
       --slip-row-height: 8.5mm;
       --col-complaint-w: 30%;
       --col-bldg-w: 15%;
@@ -38,9 +41,9 @@
       --theme-primary-light: #6366f1;
     }
     body.theme-slate {
-      --theme-primary: #1e293b;
-      --theme-primary-dark: #0f172a;
-      --theme-primary-light: #475569;
+      --theme-primary: #334155;
+      --theme-primary-dark: #1e293b;
+      --theme-primary-light: #64748b;
     }
 
     * {
@@ -52,37 +55,40 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    html, body {
-      overscroll-behavior-y: contain;
-      background: var(--theme-surface-bg);
-      color: var(--theme-text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      width: 100%;
+    /* Fixed Natural Scrolling Container */
+    html {
+      height: 100%;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Fixed App Header */
+    body {
+      min-height: 100%;
+      background: var(--theme-surface-bg);
+      color: var(--theme-text-main);
+      display: block;
+      position: relative;
+      padding-bottom: 110px !important; /* Critical clearance for bottom navbar */
+    }
+
     header {
       background: var(--theme-card-bg);
       color: var(--theme-text-main);
-      padding: 12px 16px;
+      padding: 14px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       position: sticky;
       top: 0;
       z-index: 90;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
       border-bottom: 1px solid var(--theme-border);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-      width: 100%;
     }
 
     .header-title-box {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .header-icon-badge {
@@ -94,7 +100,6 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-      flex-shrink: 0;
     }
 
     .header-icon-badge svg {
@@ -102,48 +107,99 @@
       height: 20px;
       stroke: #ffffff;
       fill: none;
-      stroke-width: 2;
     }
 
     .header-title-box h1 {
       font-size: 1.05rem;
       font-weight: 700;
       letter-spacing: -0.2px;
-      line-height: 1.2;
+      color: var(--theme-text-main);
     }
 
     .header-badge {
       background: var(--theme-surface-bg);
       color: var(--theme-text-muted);
-      font-size: 0.72rem;
-      padding: 4px 8px;
-      border-radius: 10px;
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 12px;
       font-weight: 600;
       border: 1px solid var(--theme-border);
+    }
+
+    /* Floating Fixed Bottom Navigation Bar */
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      padding: 8px 12px 14px 12px;
+      border-top: 1px solid var(--theme-border);
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+      z-index: 100;
+      justify-content: space-around;
+      gap: 4px;
+    }
+
+    nav.bottom-nav button {
+      flex: 1;
+      max-width: 80px;
+      padding: 6px 2px;
+      border: none;
+      background: transparent;
+      color: var(--theme-text-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.15s ease;
       white-space: nowrap;
     }
 
-    /* Scrollable Workspace with 105px bottom padding clearance */
+    nav.bottom-nav button svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    nav.bottom-nav button.active {
+      color: var(--theme-primary);
+      font-weight: 700;
+    }
+
+    nav.bottom-nav button.active svg {
+      stroke: var(--theme-primary);
+      transform: translateY(-2px);
+    }
+
     main {
-      flex: 1;
-      padding: 14px 14px 110px 14px;
+      padding: 14px;
       max-width: 900px;
       margin: 0 auto;
       width: 100%;
-      box-sizing: border-box;
     }
 
     .tab-content {
       display: none;
-      width: 100%;
     }
 
     .tab-content.active {
       display: block;
-      animation: tabFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: fadeIn 0.18s ease-out;
     }
 
-    @keyframes tabFadeIn {
+    @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
@@ -152,11 +208,11 @@
       background: var(--theme-card-bg);
       border-radius: var(--radius-card);
       padding: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       box-shadow: var(--theme-shadow-soft);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       width: 100%;
-      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .card-header {
@@ -183,13 +239,12 @@
       stroke: var(--theme-primary);
       fill: none;
       stroke-width: 2;
-      flex-shrink: 0;
     }
 
     .form-group {
       margin-bottom: 14px;
-      position: relative;
       width: 100%;
+      position: relative;
     }
 
     label {
@@ -205,15 +260,13 @@
     input, select {
       width: 100%;
       height: 44px;
-      padding: 8px 14px;
+      padding: 8px 12px;
       border: 1.5px solid var(--theme-border);
       border-radius: var(--radius-sm);
       font-size: 0.88rem;
       background: #fafafa;
       color: var(--theme-text-main);
       outline: none;
-      transition: all 0.15s ease;
-      box-sizing: border-box;
     }
 
     input:focus, select:focus {
@@ -222,74 +275,24 @@
       box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
     }
 
-    /* Full-Width Capsule Trigger for Unit Bottom Sheet */
-    .capsule-trigger {
-      width: 100%;
-      height: 46px;
-      padding: 8px 14px;
-      background: #fafafa;
-      border: 1.5px solid var(--theme-border);
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      font-size: 0.88rem;
+    select.gf-select {
+      background-color: #fafafa;
+      font-size: 0.84rem;
       font-weight: 600;
       color: var(--theme-text-main);
-      transition: all 0.15s ease;
-      box-sizing: border-box;
+      cursor: pointer;
     }
 
-    .capsule-trigger:hover, .capsule-trigger:focus {
-      background: #ffffff;
-      border-color: var(--theme-primary);
-    }
-
-    .capsule-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .capsule-left svg {
-      width: 18px;
-      height: 18px;
-      stroke: var(--theme-primary);
-      fill: none;
-      stroke-width: 2;
-      flex-shrink: 0;
-    }
-
-    .capsule-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 6px;
-      background: var(--theme-surface-bg);
-      color: var(--theme-text-muted);
-      border: 1px solid var(--theme-border);
-      flex-shrink: 0;
-    }
-
-    /* Source Selector & Wrapping Switchers */
     .source-selector {
-      display: flex;
-      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       background: var(--theme-surface-bg);
       padding: 4px;
       border-radius: var(--radius-sm);
       gap: 4px;
-      box-sizing: border-box;
     }
 
     .source-btn {
-      flex: 1;
       height: 38px;
       border: none;
       background: transparent;
@@ -302,7 +305,6 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      transition: all 0.2s ease;
     }
 
     .source-btn svg {
@@ -319,40 +321,27 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     }
 
-    .bldg-container {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 100%;
-    }
-
+    /* Wrap-enabled prefix buttons to eliminate mobile right-clipping */
     .prefix-switcher {
       display: flex;
-      flex-wrap: wrap; /* Prevents button clipping on phone screens */
+      flex-wrap: wrap;
       background: var(--theme-surface-bg);
       border-radius: var(--radius-sm);
       padding: 4px;
-      gap: 4px;
-      width: 100%;
-      box-sizing: border-box;
+      gap: 6px;
     }
 
     .prefix-switcher button {
-      flex: 1 1 calc(20% - 4px);
-      min-width: 58px;
-      height: 34px;
+      flex: 1 1 55px;
+      height: 36px;
       border: none;
       background: transparent;
       font-weight: 700;
-      font-size: 0.74rem;
+      font-size: 0.76rem;
       color: var(--theme-text-muted);
       border-radius: 7px;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.15s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .prefix-switcher button.active {
@@ -380,7 +369,6 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: all 0.15s ease;
       user-select: none;
     }
 
@@ -389,7 +377,6 @@
       color: #ffffff !important;
       border-color: var(--theme-primary-dark) !important;
       font-weight: 700;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     }
 
     .btn {
@@ -405,8 +392,6 @@
       justify-content: center;
       gap: 8px;
       white-space: nowrap;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-sizing: border-box;
     }
 
     .btn svg {
@@ -420,11 +405,7 @@
     .btn-primary {
       background: var(--theme-primary);
       color: #fff;
-      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.2);
-    }
-
-    .btn-primary:active {
-      transform: scale(0.98);
+      width: 100%;
     }
 
     .btn-secondary {
@@ -436,82 +417,22 @@
     .btn-accent {
       background: #0284c7;
       color: #fff;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
-    }
-
-    /* Print Slips Form Toolbar Container (100% viewport width, zero clipping) */
-    .slip-actions-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      width: 100%;
-      margin-top: 4px;
-    }
-
-    .slip-actions-row button {
-      flex: 1 1 calc(50% - 4px);
-      min-width: 130px;
-    }
-
-    .preview-toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      gap: 8px;
-      width: 100%;
-    }
-
-    .zoom-controls {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--theme-surface-bg);
-      padding: 4px 6px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--theme-border);
-      flex-wrap: wrap;
-    }
-
-    .zoom-btn {
-      min-width: 32px;
-      height: 32px;
-      padding: 0 6px;
-      border: 1px solid var(--theme-border);
-      background: #fff;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
     }
 
     /* Duplicate Balloon Alert */
     .balloon-wrapper {
       position: absolute;
-      top: -10px;
+      top: -8px;
       left: 0;
       right: 0;
       transform: translateY(-100%);
       background: #fffbeb;
       border: 1px solid #f59e0b;
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 12px;
       box-shadow: var(--theme-shadow-soft);
       z-index: 50;
       display: none;
-    }
-
-    .balloon-wrapper::after {
-      content: "";
-      position: absolute;
-      bottom: -6px;
-      left: 24px;
-      width: 10px;
-      height: 10px;
-      background: #fffbeb;
-      border-right: 1px solid #f59e0b;
-      border-bottom: 1px solid #f59e0b;
-      transform: rotate(45deg);
     }
 
     .balloon-title {
@@ -547,14 +468,15 @@
       cursor: pointer;
     }
 
-    /* Horizontal Containment for Tables */
+    /* Fixed Table Containment */
     .table-responsive {
       width: 100%;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       border-radius: var(--radius-sm);
       border: 1px solid var(--theme-border);
-      box-sizing: border-box;
+      background: #ffffff;
+      margin-top: 8px;
     }
 
     table.app-table {
@@ -596,31 +518,20 @@
       color: var(--theme-text-muted);
     }
 
-    /* Professional 2-Column Executive KPI Dashboard */
-    .kpi-executive-grid {
+    /* Established 2-Column KPI Cards */
+    .summary-grid-2col {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-bottom: 18px;
-      width: 100%;
-      box-sizing: border-box;
+      margin-bottom: 16px;
     }
 
     .kpi-card {
-      background: #f8fafc;
+      background: var(--theme-surface-bg);
       border-radius: 14px;
-      padding: 14px 10px;
+      padding: 16px 12px;
       text-align: center;
       border: 1px solid var(--theme-border);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    }
-
-    .kpi-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: var(--theme-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     .kpi-num {
@@ -630,358 +541,53 @@
       margin-top: 4px;
     }
 
-    /* Day-Wise Table Styles */
-    .day-matrix-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
-      margin-bottom: 14px;
-      border: 1px solid var(--theme-border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      text-align: center;
-    }
-
-    .day-matrix-table th {
-      background: #fafafa;
-      color: var(--theme-text-muted);
+    .kpi-label {
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: 8px 6px;
-      border: 1px solid var(--theme-border);
-    }
-
-    .day-matrix-table td {
-      padding: 10px 6px;
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--theme-primary);
-      border: 1px solid var(--theme-border);
-      background: #fff;
-    }
-
-    /* Expandable Tree View for Complaints */
-    .tree-node {
-      border: 1px solid var(--theme-border);
-      border-radius: var(--radius-sm);
-      margin-bottom: 8px;
-      background: #fff;
-      overflow: hidden;
-    }
-
-    .tree-header {
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      background: #fafafa;
-      user-select: none;
-      font-weight: 600;
-      font-size: 0.85rem;
-    }
-
-    .tree-header:hover {
-      background: #f1f5f9;
-    }
-
-    .tree-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .tree-chevron {
-      transition: transform 0.2s ease;
-      stroke: var(--theme-text-muted);
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-    }
-
-    .tree-node.expanded > .tree-header .tree-chevron {
-      transform: rotate(90deg);
-    }
-
-    .tree-content {
-      display: none;
-      padding: 10px 14px;
-      border-top: 1px solid var(--theme-border);
-    }
-
-    .tree-node.expanded > .tree-content {
-      display: block;
-    }
-
-    .tree-leaf-item {
-      padding: 8px 0;
-      border-bottom: 1px dashed var(--theme-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 0.8rem;
-    }
-
-    .tree-leaf-item:last-child {
-      border-bottom: none;
-    }
-
-    /* Fixed Bottom Navigation with Safe Clearance */
-    nav.bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      display: flex;
-      padding: 6px 12px 10px 12px;
-      border-top: 1px solid var(--theme-border);
-      z-index: 100;
-      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
-      justify-content: space-around;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    nav.bottom-nav button {
-      flex: 1;
-      max-width: 80px;
-      padding: 6px 4px;
-      border: none;
-      background: transparent;
       color: var(--theme-text-muted);
-      font-size: 0.7rem;
-      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .preview-toolbar {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .zoom-controls {
+      display: flex;
       align-items: center;
       gap: 4px;
-      cursor: pointer;
-      border-radius: 12px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    nav.bottom-nav button svg {
-      width: 22px;
-      height: 22px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 1.8;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    nav.bottom-nav button.active {
-      color: var(--theme-primary);
-    }
-
-    nav.bottom-nav button.active svg {
-      stroke: var(--theme-primary);
-      stroke-width: 2.2;
-    }
-
-    /* Slide-Up Bottom Sheet Modal for Unit Selection */
-    .sheet-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(11, 25, 44, 0.45);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 200;
-      display: none;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-
-    .sheet-modal {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: #ffffff;
-      border-radius: 24px 24px 0 0;
-      padding: 12px 18px 28px 18px;
-      z-index: 210;
-      max-height: 80vh;
-      display: flex;
-      flex-direction: column;
-      transform: translateY(100%);
-      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
-      box-sizing: border-box;
-    }
-
-    .sheet-backdrop.active {
-      display: block;
-      opacity: 1;
-    }
-
-    .sheet-backdrop.active .sheet-modal {
-      transform: translateY(0);
-    }
-
-    .sheet-drag-handle {
-      width: 40px;
-      height: 5px;
-      background: #cbd5e1;
-      border-radius: 3px;
-      margin: 0 auto 12px auto;
-    }
-
-    .sheet-header-title {
-      text-align: center;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #0b2347;
-      margin-bottom: 12px;
-    }
-
-    .sheet-search-input {
-      width: 100%;
-      height: 40px;
-      margin-bottom: 12px;
-      background: #f1f5f9;
-      border: 1px solid var(--theme-border);
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-    }
-
-    .sheet-list-scroll {
-      flex: 1;
-      overflow-y: auto;
-      max-height: 55vh;
-    }
-
-    .sheet-row-item {
-      padding: 14px 10px;
-      border-bottom: 1px solid #f1f5f9;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: #1e293b;
-    }
-
-    .sheet-row-item:active {
-      background: #f8fafc;
-    }
-
-    .sheet-row-item.selected {
-      color: #2563eb;
-      font-weight: 700;
-    }
-
-    .sheet-check-icon {
-      width: 18px;
-      height: 18px;
-      stroke: #2563eb;
-      fill: none;
-      stroke-width: 2.2;
-      display: none;
-    }
-
-    .sheet-row-item.selected .sheet-check-icon {
-      display: block;
-    }
-
-    /* Custom Themed App Alert/Confirm Modal */
-    .dialog-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(11, 25, 44, 0.45);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 300;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-    }
-
-    .dialog-backdrop.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .dialog-box {
-      background: #ffffff;
-      border-radius: var(--radius-card);
-      padding: 22px 20px;
-      width: 100%;
-      max-width: 360px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-      transform: scale(0.92);
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      text-align: center;
-      box-sizing: border-box;
-    }
-
-    .dialog-backdrop.active .dialog-box {
-      transform: scale(1);
-    }
-
-    .dialog-icon-circle {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
       background: var(--theme-surface-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 12px auto;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--theme-border);
     }
 
-    .dialog-icon-circle svg {
-      width: 24px;
-      height: 24px;
-      stroke: var(--theme-primary);
-      fill: none;
-      stroke-width: 2;
+    .zoom-btn {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 6px;
+      border: 1px solid var(--theme-border);
+      background: #fff;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    .dialog-title {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #0b192c;
-      margin-bottom: 6px;
-    }
-
-    .dialog-message {
-      font-size: 0.85rem;
-      color: var(--theme-text-muted);
-      line-height: 1.4;
-      margin-bottom: 18px;
-    }
-
-    .dialog-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    /* Print Preview Board */
     .screen-slip-scroll-wrapper {
       width: 100%;
       overflow: auto;
       background: #334155;
-      padding: 10px;
+      padding: 12px;
       border-radius: var(--radius-card);
       margin-bottom: 20px;
       box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
       touch-action: pan-x pan-y;
-      box-sizing: border-box;
     }
 
     .zoom-scaler {
@@ -989,9 +595,7 @@
       transition: transform 0.08s ease-out;
     }
 
-    /* ==========================================================================
-       ISOLATED PRINT LAYOUT (Strict Monochrome Black & White Vector Standard)
-       ========================================================================== */
+    /* Isolated Print Slips Styling */
     @page {
       size: 297mm 210mm;
       margin: 0mm;
@@ -1102,6 +706,97 @@
       border-left: 5px solid #000 !important;
     }
 
+    /* Modal Sheet Backdrop & Dialog Box */
+    .sheet-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+      backdrop-filter: blur(4px);
+    }
+
+    .bottom-sheet-card {
+      background: #ffffff;
+      width: 100%;
+      max-height: 80vh;
+      border-radius: 24px 24px 0 0;
+      padding: 16px 20px 30px 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+      animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-handle-bar {
+      width: 44px;
+      height: 5px;
+      background: #cbd5e1;
+      border-radius: 10px;
+      margin: 0 auto 14px auto;
+    }
+
+    .sheet-list-container {
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      max-height: 60vh;
+      margin-top: 10px;
+    }
+
+    .sheet-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .sheet-list-item:active {
+      background: #f8fafc;
+    }
+
+    .sheet-list-item.selected {
+      color: var(--theme-primary);
+      font-weight: 700;
+    }
+
+    .app-custom-dialog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 300;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(3px);
+    }
+
+    .app-dialog-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
     @media print {
       html, body {
         width: 297mm !important;
@@ -1149,23 +844,23 @@
 </head>
 <body class="theme-crimson">
 
-  <!-- Top Fixed Header -->
+  <!-- Header Banner -->
   <header>
     <div class="header-title-box">
       <div class="header-icon-badge">
-        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
       </div>
       <div>
         <h1>AGE B/R-II</h1>
-        <div style="font-size:0.68rem; color:var(--theme-text-muted); font-weight:600;">Maintenance Subdivision</div>
+        <div style="font-size:0.68rem; color:var(--theme-text-muted); font-weight:600;">Maintenance Management</div>
       </div>
     </div>
     <span class="header-badge" id="app-date-indicator"></span>
   </header>
 
-  <!-- Main Workspace -->
+  <!-- Main Scrollable Content Area -->
   <main>
-    <!-- ==================== TAB 1: REGISTER COMPLAINTS ==================== -->
+    <!-- ==================== TAB 1: REGISTER ENTRY ==================== -->
     <section id="tab-entry" class="tab-content active">
       <div class="card">
         <div class="card-header">
@@ -1177,12 +872,11 @@
         </div>
 
         <form id="complaint-form" onsubmit="saveOrUpdateComplaint(event)">
-          <!-- Source Toggle -->
           <div class="form-group">
             <label>Complaint Source</label>
             <div class="source-selector">
               <button type="button" class="source-btn active" id="btn-src-register" onclick="chooseSource('REGISTER')">
-                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Register
               </button>
               <button type="button" class="source-btn" id="btn-src-armaan" onclick="chooseSource('ARMAAN')">
@@ -1192,24 +886,17 @@
             </div>
           </div>
 
-          <!-- Date Field (Full Width Row) -->
+          <!-- Separate Rows for Date and Unit to eliminate mobile crowding -->
           <div class="form-group">
             <label>Date</label>
             <input type="date" id="input-date" required>
           </div>
 
-          <!-- Unit / Central Amenity (Full Width Row) -->
           <div class="form-group">
             <label>Unit / Central Amenity</label>
-            <div class="capsule-trigger" onclick="openUnitBottomSheet()">
-              <div class="capsule-left">
-                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                <span id="capsule-selected-text">Select Unit...</span>
-              </div>
-              <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                <span class="capsule-badge" id="capsule-selected-badge">OTM</span>
-                <svg style="width:16px;height:16px;stroke:var(--theme-text-muted);fill:none;stroke-width:2;" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-              </div>
+            <div id="unit-custom-trigger" style="height:44px; background:#fafafa; border:1.5px solid var(--theme-border); border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center; padding:0 12px; cursor:pointer;" onclick="openUnitBottomSheet()">
+              <span id="unit-trigger-label" style="font-size:0.86rem; font-weight:600;">Select Unit / Amenity</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
             <input type="hidden" id="input-unit" required>
           </div>
@@ -1219,17 +906,17 @@
             <div class="balloon-wrapper" id="balloon-alert">
               <div class="balloon-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                Duplicate / Recurring Complaint Alert
+                Duplicate / Recurring Complaint Found
               </div>
               <div class="balloon-desc" id="balloon-text"></div>
               <div class="balloon-btns">
-                <button type="button" onclick="closeBalloon()">Proceed Anyway</button>
+                <button type="button" onclick="closeBalloon()">Proceed</button>
                 <button type="button" onclick="resetBldgInput()">Cancel</button>
               </div>
             </div>
 
-            <label id="lbl-bldg-heading">Building / Quarter / Facility Location</label>
-            <div class="bldg-container">
+            <label id="lbl-bldg-heading">Facility Landmark / Building / Quarter</label>
+            <div style="display:flex; flex-direction:column; gap:6px;">
               <div class="prefix-switcher">
                 <button type="button" id="btn-pref-p" class="active" onclick="choosePrefix('P')">P-</button>
                 <button type="button" id="btn-pref-t" onclick="choosePrefix('T')">T-</button>
@@ -1241,45 +928,53 @@
             </div>
           </div>
 
-          <!-- Nature of Complaint Field & A-Z Sorted List -->
           <div class="form-group">
             <label>Nature of Complaint (Select Chips or Type)</label>
-            <input type="text" id="input-complaint" placeholder="e.g. BATHROOM GUTTER BLOCK & KITCHEN GUTTER BLOCK" required>
+            <input type="text" id="input-complaint" placeholder="e.g. BATHROOM GUTTER BLOCK" required>
             <div class="chip-container" id="quick-complaint-chips"></div>
           </div>
 
-          <!-- User Mobile Field -->
           <div class="form-group">
             <label>User's Mobile Number (Optional)</label>
             <input type="tel" id="input-mobile" inputmode="numeric" placeholder="10-digit mobile number" maxlength="10">
           </div>
 
-          <!-- Action Buttons -->
-          <div style="display:flex; gap:8px; margin-top:8px;">
-            <button type="submit" class="btn btn-primary" id="btn-submit-complaint" style="flex:1;">
-              <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+          <div style="display:flex; gap:8px; margin-top:16px;">
+            <button type="submit" class="btn btn-primary" id="btn-submit-complaint">
+              <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
               Save Complaint
             </button>
-            <button type="button" class="btn btn-secondary" id="btn-cancel-edit-complaint" style="display:none; width:100px;" onclick="cancelComplaintEdit()">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-edit-complaint" style="display:none; width:110px;" onclick="cancelComplaintEdit()">
               Cancel
             </button>
           </div>
         </form>
       </div>
 
-      <!-- Expandable Tree-View Complaints Display -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
-            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
-            Logged Complaints Tree View
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Logged Today
           </div>
-          <select id="tree-sort-order" style="height:32px; font-size:0.75rem; width:120px; padding:4px 8px;" onchange="renderComplaintsTreeView()">
-            <option value="NAME">Sort by Name</option>
-            <option value="TIME">Sort by Time</option>
-          </select>
         </div>
-        <div id="tree-view-container"></div>
+        <div class="table-responsive">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th>Zone</th>
+                <th>Unit / Facility</th>
+                <th>Location / Bldg</th>
+                <th>Complaint</th>
+                <th>Source</th>
+                <th style="text-align:center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="today-table-body">
+              <tr><td colspan="6" style="text-align:center; color: var(--theme-text-muted);">No entries yet for today.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -1292,25 +987,26 @@
             Landscape Slips & Vector PDF Sharing (~25KB)
           </div>
         </div>
-        
+
         <div class="form-group">
           <label>Slip Date</label>
           <input type="date" id="print-date-select" onchange="buildPrintableSlips()">
         </div>
 
-        <!-- 100% Responsive Action Buttons (No Clipping) -->
-        <div class="slip-actions-row">
-          <button type="button" class="btn btn-accent" onclick="shareDirectSlipPDF()">
+        <!-- Responsive flex buttons preventing right screen blowout -->
+        <div style="display:flex; gap:8px; margin-bottom:14px;">
+          <button type="button" class="btn btn-accent" style="flex:1; min-width:0;" onclick="shareDirectSlipPDF()">
             <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            Share PDF
+            <span style="overflow:hidden; text-overflow:ellipsis;">Share PDF</span>
           </button>
-          <button type="button" class="btn btn-primary" onclick="triggerNativePrint()">
-            Print
+          <button type="button" class="btn btn-primary" style="flex:1; min-width:0;" onclick="triggerNativePrint()">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            <span>Print</span>
           </button>
         </div>
 
-        <div class="preview-toolbar" style="margin-top:14px;">
-          <span style="font-size:0.75rem; color:var(--theme-text-muted); font-weight:600;">Two-Finger Touch Pinch Zoom:</span>
+        <div class="preview-toolbar">
+          <span style="font-size:0.75rem; color:var(--theme-text-muted); font-weight:600;">Touch Zoom:</span>
           <div class="zoom-controls">
             <button class="zoom-btn" onclick="adjustZoom(-0.05)">−</button>
             <span id="zoom-indicator" style="font-size:0.75rem; font-weight:700; width:45px; text-align:center;">100%</span>
@@ -1342,9 +1038,10 @@
           <label>Search Flat / Location / Phone</label>
           <input type="text" id="history-search" placeholder="Search records..." oninput="updateHistoryDisplay()">
         </div>
+
         <div class="form-group">
           <label>Filter Zone</label>
-          <select id="history-zone-filter" onchange="updateHistoryDisplay()">
+          <select id="history-zone-filter" class="gf-select" onchange="updateHistoryDisplay()">
             <option value="ALL">All Zones</option>
             <option value="Zone-III">Zone-III</option>
             <option value="Zone-IV">Zone-IV</option>
@@ -1371,7 +1068,7 @@
       </div>
     </section>
 
-    <!-- ==================== TAB 4: RESTORED EXECUTIVE DASHBOARD SUMMARY ==================== -->
+    <!-- ==================== TAB 4: RESTORED EXECUTIVE SUMMARY ==================== -->
     <section id="tab-summary" class="tab-content">
       <div class="card">
         <div class="card-header">
@@ -1381,13 +1078,13 @@
           </div>
         </div>
 
-        <div class="form-group" style="max-width: 250px;">
+        <div class="form-group">
           <label>Select Month</label>
           <input type="month" id="summary-month-select" onchange="renderMonthlySummary()">
         </div>
 
-        <!-- Clean 2-Column KPI Executive Grid matching user's preferred layout -->
-        <div class="kpi-executive-grid">
+        <!-- 2-Column KPI Cards -->
+        <div class="summary-grid-2col">
           <div class="kpi-card">
             <div class="kpi-label">TOTAL JOBS</div>
             <div class="kpi-num" id="kpi-total">0</div>
@@ -1410,7 +1107,9 @@
           </div>
         </div>
 
-        <div class="card-title" style="margin-top:16px; margin-bottom:10px; font-size:0.85rem;">Workload Breakdown by Sector / Institute / OTM</div>
+        <div class="card-title" style="margin-top:16px; margin-bottom:8px; font-size:0.86rem;">
+          Workload Breakdown by Sector / Institute / OTM
+        </div>
         <div class="table-responsive">
           <table class="app-table">
             <thead>
@@ -1426,65 +1125,41 @@
             <tbody id="summary-breakdown-body"></tbody>
           </table>
         </div>
-      </div>
 
-      <!-- Integrated Day-Wise Matrix Table Card -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Day-Wise Workload Breakdown
-          </div>
+        <!-- Day-Wise Workload Table Matrix -->
+        <div class="card-title" style="margin-top:22px; margin-bottom:8px; font-size:0.86rem;">
+          Day-Wise Realtime Matrix
         </div>
-        <div class="form-group" style="max-width: 250px;">
-          <label>Select Date</label>
-          <input type="date" id="summary-day-select" onchange="renderDayWiseSummaryMatrix()">
+        <div class="form-group">
+          <input type="date" id="summary-day-select" onchange="renderDayWiseMatrix()">
         </div>
-
-        <div style="font-size:0.74rem; font-weight:700; color:var(--theme-text-muted); margin-bottom:6px;">ZONE-III BREAKDOWN</div>
+        
         <div class="table-responsive">
-          <table class="day-matrix-table">
+          <table class="app-table">
             <thead>
               <tr>
-                <th>Sec A</th>
+                <th colspan="2" style="background:#e0f2fe; color:#0369a1; text-align:center;">ZONE-III</th>
+              </tr>
+              <tr>
+                <th>Sector A</th>
                 <th>OTM</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td id="day-z3-seca">0</td>
-                <td id="day-z3-otm">0</td>
+                <td id="day-z3-sec" style="font-weight:700; text-align:center;">0</td>
+                <td id="day-z3-otm" style="font-weight:700; text-align:center;">0</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <div style="font-size:0.74rem; font-weight:700; color:var(--theme-text-muted); margin-bottom:6px;">ZONE-IV BREAKDOWN</div>
-        <div class="table-responsive">
-          <table class="day-matrix-table">
+        <div class="table-responsive" style="margin-top:10px;">
+          <table class="app-table">
             <thead>
               <tr>
-                <th>Sec B</th>
-                <th>Sec C</th>
-                <th>Amenities / Inst</th>
-                <th>OTM</th>
+                <th colspan="5" style="background:#fef3c7; color:#b45309; text-align:center;">ARMAAN BREAKDOWN</th>
               </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td id="day-z4-secb">0</td>
-                <td id="day-z4-secc">0</td>
-                <td id="day-z4-inst">0</td>
-                <td id="day-z4-otm">0</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div style="font-size:0.74rem; font-weight:700; color:var(--theme-text-muted); margin-bottom:6px;">ARMAAN PORTAL BREAKDOWN</div>
-        <div class="table-responsive">
-          <table class="day-matrix-table">
-            <thead>
               <tr>
                 <th>Sec A</th>
                 <th>Sec B</th>
@@ -1495,11 +1170,11 @@
             </thead>
             <tbody>
               <tr>
-                <td id="day-arm-seca">0</td>
-                <td id="day-arm-secb">0</td>
-                <td id="day-arm-secc">0</td>
-                <td id="day-arm-z3otm">0</td>
-                <td id="day-arm-z4otm">0</td>
+                <td id="day-arm-seca" style="text-align:center; font-weight:700;">0</td>
+                <td id="day-arm-secb" style="text-align:center; font-weight:700;">0</td>
+                <td id="day-arm-secc" style="text-align:center; font-weight:700;">0</td>
+                <td id="day-arm-z3otm" style="text-align:center; font-weight:700;">0</td>
+                <td id="day-arm-z4otm" style="text-align:center; font-weight:700;">0</td>
               </tr>
             </tbody>
           </table>
@@ -1509,88 +1184,62 @@
 
     <!-- ==================== TAB 5: MASTER SETTINGS ==================== -->
     <section id="tab-settings" class="tab-content">
-      <!-- Theme Switcher -->
+      <!-- Theme Selection -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2v20"/></svg>
-            App Interface Theme
+            App Interface Theme Color
           </div>
         </div>
-        <p style="font-size: 0.78rem; color: var(--theme-text-muted); margin-bottom: 12px;">
-          Select screen color scheme. Output slips and vector PDFs remain standard black & white.
-        </p>
         <div class="form-group">
-          <select id="cfg-ui-theme" onchange="changeAppTheme(this.value)">
-            <option value="theme-crimson">Crimson Red (Netflix Aesthetic)</option>
-            <option value="theme-teal">Deep Teal (WhatsApp Standard)</option>
+          <select id="cfg-ui-theme" class="gf-select" onchange="changeAppTheme(this.value)">
+            <option value="theme-crimson">Crimson Red (Netflix Design)</option>
+            <option value="theme-teal">Deep Teal (WhatsApp Theme)</option>
             <option value="theme-indigo">Royal Indigo (Apple Navy)</option>
-            <option value="theme-slate">Midnight Slate (iOS Monolith)</option>
+            <option value="theme-slate">Midnight Slate</option>
           </select>
         </div>
       </div>
 
-      <!-- Configurable Repeat Alert Days -->
+      <!-- Repeat Complaint Window Settings -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Duplicate / Repeat Warning Window
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+            Repeat Complaint Duplicate Window
           </div>
         </div>
         <div class="form-group">
-          <label>Check Past Complaints (Days)</label>
+          <label>Lookback Timeframe (Days)</label>
           <input type="number" id="cfg-dup-days" value="7" min="1" max="60" onchange="saveMasterSettings()">
         </div>
       </div>
 
-      <!-- Contractors Directory Database -->
-      <div class="card">
+      <!-- In-App Code Updater -->
+      <div class="card" style="border: 2px solid var(--theme-primary);">
         <div class="card-header">
           <div class="card-title">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-            Contractors Directory
+            <svg viewBox="0 0 24 24"><path d="M4 17v2h16v-2H4zm8-15L4.5 9.5l1.42 1.42L11 5.83V15h2V5.83l5.08 5.09 1.42-1.42L12 2z"/></svg>
+            In-App Code Updater (Hot-Patch)
           </div>
         </div>
-        <div class="table-responsive">
-          <table class="app-table">
-            <thead>
-              <tr>
-                <th>Contractor Firm</th>
-                <th>Contact</th>
-                <th>Phone</th>
-                <th>Assigned Zone</th>
-                <th style="text-align:center;">Action</th>
-              </tr>
-            </thead>
-            <tbody id="contractors-table-body"></tbody>
-          </table>
-        </div>
-        <div style="margin-top: 12px; padding: 12px; background: var(--theme-surface-bg); border-radius: var(--radius-sm); border: 1px solid var(--theme-border);">
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <input type="text" id="add-con-name" placeholder="Firm Name (e.g. M/s G.S. Enterprises)">
-            <div style="display:flex; gap:8px;">
-              <input type="text" id="add-con-person" placeholder="Contact Person" style="flex:1;">
-              <input type="tel" id="add-con-phone" placeholder="Phone Number" style="flex:1;">
-            </div>
-            <select id="add-con-zone">
-              <option value="Zone-III">Zone-III</option>
-              <option value="Zone-IV">Zone-IV</option>
-              <option value="Both">Both Zones</option>
-            </select>
-            <button class="btn btn-primary" onclick="addOrUpdateContractor()">Add Contractor</button>
-          </div>
-        </div>
+        <input type="file" id="ota-html-input" style="display:none;" accept=".html" onchange="handleAppCodeUpdate(event)">
+        <button class="btn btn-primary" onclick="document.getElementById('ota-html-input').click()">
+          ⚡ Update App Code (.html)
+        </button>
       </div>
 
-      <!-- Units, Sectors & Central Amenities Directory -->
+      <!-- Units & Central Amenities Directory -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
             <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            Units, Sectors & Central Amenities
+            Units & Central Amenities Directory
           </div>
+          <span id="unit-edit-badge" style="display:none; font-size:0.7rem; font-weight:700; background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:12px;">Editing</span>
         </div>
+        
         <div class="table-responsive">
           <table class="app-table">
             <thead>
@@ -1599,80 +1248,121 @@
                 <th>Zone</th>
                 <th>Category</th>
                 <th>Prefix</th>
-                <th style="text-align:center;">Action</th>
+                <th style="text-align:center;">Actions</th>
               </tr>
             </thead>
             <tbody id="units-table-body"></tbody>
           </table>
         </div>
-        <div style="margin-top: 12px; padding: 12px; background: var(--theme-surface-bg); border-radius: var(--radius-sm); border: 1px solid var(--theme-border);">
-          <div style="display:flex; flex-direction:column; gap:8px;">
+
+        <div style="margin-top:14px; padding:12px; background:var(--theme-surface-bg); border-radius:var(--radius-sm); border:1px solid var(--theme-border);">
+          <div class="form-group">
             <input type="text" id="add-unit-name" placeholder="Name (e.g. SWIMMING POOL, SEC D)">
-            <div style="display:flex; gap:8px;">
-              <select id="add-unit-zone" style="flex:1;">
-                <option value="Zone-III">Zone-III</option>
-                <option value="Zone-IV">Zone-IV</option>
-              </select>
-              <select id="add-unit-type" style="flex:1;">
-                <option value="SECTOR">Sector</option>
-                <option value="INSTITUTE">Institute (Central)</option>
-                <option value="OTM">OTM</option>
-              </select>
-              <select id="add-unit-pref" style="flex:1;">
-                <option value="P">P-</option>
-                <option value="T">T-</option>
-                <option value="ST">ST-</option>
-                <option value="POST">Post No.</option>
-                <option value="TEXT">TEXT</option>
-              </select>
-            </div>
-            <button class="btn btn-primary" id="btn-save-unit" onclick="handleUnitFormSubmit()">Add Unit</button>
-            <button class="btn btn-secondary" id="btn-cancel-unit-edit" style="display:none;" onclick="cancelUnitEdit()">Cancel</button>
           </div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;">
+            <select id="add-unit-zone" class="gf-select" style="flex:1;">
+              <option value="Zone-III">Zone-III</option>
+              <option value="Zone-IV">Zone-IV</option>
+            </select>
+            <select id="add-unit-type" class="gf-select" style="flex:1;">
+              <option value="SECTOR">Sector</option>
+              <option value="INSTITUTE">Institute</option>
+              <option value="OTM">OTM</option>
+            </select>
+            <select id="add-unit-pref" class="gf-select" style="flex:1;">
+              <option value="P">P-</option>
+              <option value="T">T-</option>
+              <option value="ST">ST-</option>
+              <option value="POST">Post No.</option>
+              <option value="TEXT">TEXT</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="btn-save-unit" onclick="handleUnitFormSubmit()">Add Unit</button>
+          <button class="btn btn-secondary" id="btn-cancel-unit-edit" style="display:none; margin-top:6px; width:100%;" onclick="cancelUnitEdit()">Cancel</button>
         </div>
       </div>
 
-      <!-- Presets Management -->
+      <!-- Print Setup & Armaan Flag -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
-            <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
-            Complaint Nature Presets (A–Z)
+            <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Print Setup & Armaan Highlight
           </div>
         </div>
-        <div class="chip-container" id="settings-presets-container"></div>
-        <div style="display:flex; gap:8px; margin-top:12px;">
-          <input type="text" id="new-preset-text" placeholder="Add Preset (e.g. SEWAGE OVERFLOW)">
-          <button class="btn btn-secondary" onclick="addNewComplaintPreset()">Add</button>
+        <div class="form-group">
+          <label>Slip Title Text</label>
+          <input type="text" id="cfg-slip-header" value="AGE B/R-II SUB DIVISION : COMPLAINT SLIP">
         </div>
+        <div class="form-group">
+          <label>Zone-III Header</label>
+          <input type="text" id="cfg-z3-header-sector" value="Sector A & OTM">
+        </div>
+        <div class="form-group">
+          <label>Zone-IV Header</label>
+          <input type="text" id="cfg-z4-header-sector" value="Sec-'C', Sec-'B' & OTM">
+        </div>
+        <div class="form-group">
+          <label>Armaan Flag Style (B&W)</label>
+          <select id="cfg-armaan-style" class="gf-select">
+            <option value="stamp">Inverted Solid Black Stamp (★ ARMAAN ★)</option>
+            <option value="double">Double Outline Frame Box</option>
+            <option value="leftbar">Heavy Left Priority Bar</option>
+            <option value="text">Clean Text Only</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" style="width:100%;" onclick="saveMasterSettings()">Save Print Setup</button>
       </div>
 
-      <!-- Dual Backup & Hot-Patch Update -->
+      <!-- Presets & Sync -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">
             <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Dual Backup (Excel + JSON) & Code Updater
+            Complaint Presets & Multi-Device Sync
           </div>
         </div>
-        <p style="font-size:0.78rem; color:var(--theme-text-muted); margin-bottom:12px;">
-          Export to formatted Excel CSV for office spreadsheet records, or export JSON for cross-device sync.
-        </p>
-        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
-          <button class="btn btn-secondary" onclick="exportToExcelCSV()">📊 Export Excel CSV</button>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-secondary" style="flex:1;" onclick="exportDataToFile()">📁 Export JSON</button>
-            <input type="file" id="json-file-input" style="display:none;" accept=".json" onchange="importDataFromFile(event)">
-            <button class="btn btn-secondary" style="flex:1;" onclick="document.getElementById('json-file-input').click()">🔄 Import JSON</button>
-          </div>
+        <div class="chip-container" id="settings-presets-container"></div>
+        <div style="display:flex; gap:8px; margin-top:12px; margin-bottom:14px;">
+          <input type="text" id="new-preset-text" placeholder="New Complaint (e.g. SEWAGE OVERFLOW)">
+          <button class="btn btn-secondary" onclick="addNewComplaintPreset()">Add</button>
         </div>
-        <input type="file" id="ota-html-input" style="display:none;" accept=".html" onchange="handleAppCodeUpdate(event)">
-        <button class="btn btn-primary" onclick="document.getElementById('ota-html-input').click()">⚡ Update App Code (.html)</button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" style="flex:1;" onclick="exportDataToFile()">Export JSON</button>
+          <button class="btn btn-secondary" style="flex:1;" onclick="exportDataToExcelCSV()">Export Excel</button>
+          <input type="file" id="json-file-input" style="display:none;" accept=".json" onchange="importDataFromFile(event)">
+          <button class="btn btn-secondary" style="width:100%; margin-top:4px;" onclick="document.getElementById('json-file-input').click()">Import & Merge</button>
+        </div>
       </div>
     </section>
   </main>
 
-  <!-- Fixed iOS Bottom Navigation Bar -->
+  <!-- Bottom Sheet Unit Selector (Replacing Bulky Native Select) -->
+  <div class="sheet-overlay" id="unit-sheet-overlay" onclick="closeUnitBottomSheet(event)">
+    <div class="bottom-sheet-card" onclick="event.stopPropagation()">
+      <div class="sheet-handle-bar"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span style="font-weight:700; font-size:1.05rem;">Choose Unit / Amenity</span>
+        <span style="color:var(--theme-text-muted); font-size:0.8rem; cursor:pointer;" onclick="closeUnitBottomSheet()">Done</span>
+      </div>
+      <input type="text" id="sheet-unit-search" placeholder="Type to search..." style="margin-bottom:8px;" oninput="filterBottomSheetUnits()">
+      <div class="sheet-list-container" id="sheet-units-list"></div>
+    </div>
+  </div>
+
+  <!-- Custom In-App Modal Dialog -->
+  <div class="app-custom-dialog" id="custom-modal-dialog">
+    <div class="app-dialog-card">
+      <div id="modal-dialog-title" style="font-weight:700; font-size:1rem; margin-bottom:6px;">Alert</div>
+      <div id="modal-dialog-message" style="font-size:0.84rem; color:var(--theme-text-muted); margin-bottom:16px;"></div>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn btn-secondary" id="modal-btn-cancel" style="flex:1; display:none;" onclick="closeAppDialog(false)">Cancel</button>
+        <button type="button" class="btn btn-primary" id="modal-btn-ok" style="flex:1;" onclick="closeAppDialog(true)">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Bottom Navigation Bar -->
   <nav class="bottom-nav">
     <button class="active" onclick="switchNav('tab-entry', this)">
       <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -1696,26 +1386,6 @@
     </button>
   </nav>
 
-  <!-- iOS Slide-Up Bottom Sheet Modal for Unit Selection -->
-  <div class="sheet-backdrop" id="unit-sheet-backdrop" onclick="closeUnitBottomSheet(event)">
-    <div class="sheet-modal" onclick="event.stopPropagation()">
-      <div class="sheet-drag-handle"></div>
-      <div class="sheet-header-title">Choose Unit / Facility</div>
-      <input type="text" class="sheet-search-input" id="sheet-search" placeholder="Type to search unit or facility..." oninput="filterUnitBottomSheet()">
-      <div class="sheet-list-scroll" id="sheet-list-container"></div>
-    </div>
-  </div>
-
-  <!-- Custom Themed Dialog Modal -->
-  <div class="dialog-backdrop" id="custom-dialog">
-    <div class="dialog-box">
-      <div class="dialog-icon-circle" id="dialog-icon"></div>
-      <div class="dialog-title" id="dialog-title">Alert</div>
-      <div class="dialog-message" id="dialog-msg"></div>
-      <div class="dialog-actions" id="dialog-actions"></div>
-    </div>
-  </div>
-
   <script>
     /* ==========================================================================
        NON-DESTRUCTIVE DATABASE INITIALIZATION
@@ -1731,11 +1401,6 @@
       { name: "MANDIR COMPLEX", zone: "Zone-III", type: "INSTITUTE", prefix: "TEXT" }
     ];
 
-    const DEFAULT_CONTRACTORS = [
-      { id: "C1", name: "M/s G. S. Enterprises & Co.", person: "G. Singh", phone: "9876543210", zone: "Zone-III" },
-      { id: "C2", name: "M/s A. K. Brothers", person: "A. Kumar", phone: "9876543211", zone: "Zone-IV" }
-    ];
-
     const DEFAULT_PRESETS = [
       "BATHROOM GUTTER BLOCK",
       "CHAMBER OVERFLOW",
@@ -1746,7 +1411,6 @@
 
     let storedUnits = JSON.parse(localStorage.getItem("age_v6_units"));
     let storedComplaints = JSON.parse(localStorage.getItem("age_v6_complaints")) || [];
-    let storedContractors = JSON.parse(localStorage.getItem("age_v6_contractors")) || DEFAULT_CONTRACTORS;
     let storedPresets = JSON.parse(localStorage.getItem("age_v6_presets")) || DEFAULT_PRESETS;
     let storedCfg = JSON.parse(localStorage.getItem("age_v6_cfg")) || {};
 
@@ -1754,7 +1418,6 @@
       source: "REGISTER",
       prefix: "P",
       units: storedUnits && storedUnits.length > 0 ? storedUnits : DEFAULT_UNITS,
-      contractors: storedContractors,
       presets: storedPresets,
       complaints: storedComplaints,
       settings: {
@@ -1765,12 +1428,12 @@
         rowHeight: storedCfg.rowHeight || 8.5,
         colComplaintW: storedCfg.colComplaintW || 30,
         colBldgW: storedCfg.colBldgW || 15,
-        dupCheckDays: storedCfg.dupCheckDays || 7,
         armaanStyle: storedCfg.armaanStyle || "stamp",
         armaanLabel: storedCfg.armaanLabel || "ARMAAN",
         z3Contractor: storedCfg.z3Contractor || "M/s G. S. Enterprises & Co.",
         z4Contractor: storedCfg.z4Contractor || "M/s A. K. Brothers",
-        uiTheme: storedCfg.uiTheme || "theme-crimson"
+        uiTheme: storedCfg.uiTheme || "theme-crimson",
+        dupDays: storedCfg.dupDays || 7
       }
     };
 
@@ -1778,6 +1441,7 @@
     let editingUnitIndex = -1;
     let editingComplaintId = null;
     let currentZoom = 1.0;
+    let dialogCallback = null;
 
     document.addEventListener("DOMContentLoaded", () => {
       const today = new Date().toISOString().split("T")[0];
@@ -1785,69 +1449,26 @@
 
       document.getElementById("input-date").value = today;
       document.getElementById("print-date-select").value = today;
-      document.getElementById("summary-day-select").value = today;
       document.getElementById("summary-month-select").value = curMonth;
+      document.getElementById("summary-day-select").value = today;
       document.getElementById("app-date-indicator").innerText = today;
 
       applyAppTheme(app.settings.uiTheme);
-      document.getElementById("cfg-dup-days").value = app.settings.dupCheckDays;
-      sortUnitsList();
-      sortPresetsList();
-      selectInitialUnit();
+      sortUnitsListAlphabetical();
       renderComplaintChips();
       renderPresetChipsInSettings();
-      renderContractorsTable();
+      renderTodayTable();
       renderUnitsTable();
-      renderComplaintsTreeView();
+      loadSettingsToUI();
       buildPrintableSlips();
-      renderDayWiseSummaryMatrix();
-      renderMonthlySummary();
+
+      if (app.units.length > 0) {
+        selectUnitFromSheet(app.units[0].name);
+      }
 
       initPinchToZoom();
       setTimeout(fitSlipToScreenWidth, 350);
     });
-
-    /* ==========================================================================
-       CUSTOM THEMED DIALOG SYSTEM (Non-blocking Promises)
-       ========================================================================== */
-    function showCustomAlert(title, message) {
-      return new Promise((resolve) => {
-        const dialog = document.getElementById("custom-dialog");
-        document.getElementById("dialog-icon").innerHTML = `<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>`;
-        document.getElementById("dialog-title").innerText = title;
-        document.getElementById("dialog-msg").innerText = message;
-        document.getElementById("dialog-actions").innerHTML = `
-          <button class="btn btn-primary" id="dialog-confirm-btn" style="width:100%;">OK</button>
-        `;
-        dialog.classList.add("active");
-        document.getElementById("dialog-confirm-btn").onclick = () => {
-          dialog.classList.remove("active");
-          resolve(true);
-        };
-      });
-    }
-
-    function showCustomConfirm(title, message) {
-      return new Promise((resolve) => {
-        const dialog = document.getElementById("custom-dialog");
-        document.getElementById("dialog-icon").innerHTML = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
-        document.getElementById("dialog-title").innerText = title;
-        document.getElementById("dialog-msg").innerText = message;
-        document.getElementById("dialog-actions").innerHTML = `
-          <button class="btn btn-secondary" style="flex:1;" id="dialog-cancel-btn">Cancel</button>
-          <button class="btn btn-primary" style="flex:1;" id="dialog-confirm-btn">Confirm</button>
-        `;
-        dialog.classList.add("active");
-        document.getElementById("dialog-cancel-btn").onclick = () => {
-          dialog.classList.remove("active");
-          resolve(false);
-        };
-        document.getElementById("dialog-confirm-btn").onclick = () => {
-          dialog.classList.remove("active");
-          resolve(true);
-        };
-      });
-    }
 
     /* ==========================================================================
        DYNAMIC UI THEME CONTROLLER
@@ -1873,90 +1494,74 @@
       document.getElementById(tabId).classList.add("active");
       btn.classList.add("active");
 
+      window.scrollTo(0, 0);
+
       if (tabId === "tab-slips") {
         buildPrintableSlips();
         setTimeout(fitSlipToScreenWidth, 150);
       }
       if (tabId === "tab-history") updateHistoryDisplay();
       if (tabId === "tab-summary") {
-        renderDayWiseSummaryMatrix();
         renderMonthlySummary();
+        renderDayWiseMatrix();
       }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     /* ==========================================================================
-       SLIDE-UP BOTTOM SHEET FOR UNIT SELECTION
+       UNIT SELECTION & BOTTOM SHEET (Google Forms Design)
        ========================================================================== */
     function openUnitBottomSheet() {
-      renderBottomSheetList();
-      document.getElementById("unit-sheet-backdrop").classList.add("active");
-      document.getElementById("sheet-search").value = "";
+      document.getElementById("unit-sheet-overlay").style.display = "flex";
+      document.getElementById("sheet-unit-search").value = "";
+      filterBottomSheetUnits();
     }
 
     function closeUnitBottomSheet(e) {
-      document.getElementById("unit-sheet-backdrop").classList.remove("active");
+      if (e && e.target !== e.currentTarget && e.target.tagName !== "SPAN") return;
+      document.getElementById("unit-sheet-overlay").style.display = "none";
     }
 
-    function renderBottomSheetList(filterText = "") {
-      const container = document.getElementById("sheet-list-container");
-      const currentVal = document.getElementById("input-unit").value;
-      const q = filterText.trim().toUpperCase();
+    function filterBottomSheetUnits() {
+      const q = document.getElementById("sheet-unit-search").value.trim().toUpperCase();
+      const container = document.getElementById("sheet-units-list");
+      const currentSelected = document.getElementById("input-unit").value;
 
-      const items = app.units.filter(u => u.name.toUpperCase().includes(q) || u.zone.toUpperCase().includes(q) || u.type.toUpperCase().includes(q));
+      const filtered = app.units.filter(u => u.name.toUpperCase().includes(q) || u.zone.toUpperCase().includes(q));
 
-      container.innerHTML = items.map(u => {
-        const isSelected = u.name === currentVal;
+      container.innerHTML = filtered.map(u => {
+        const isSel = u.name === currentSelected;
         return `
-          <div class="sheet-row-item ${isSelected ? 'selected' : ''}" onclick="selectUnitFromSheet('${u.name}')">
+          <div class="sheet-list-item ${isSel ? 'selected' : ''}" onclick="selectUnitFromSheet('${u.name}')">
             <div>
-              <div style="font-weight:600;">${u.name}</div>
-              <div style="font-size:0.75rem; color:var(--theme-text-muted); margin-top:2px;">
-                ${u.zone} &bull; <span class="badge-pill" style="background:#f1f5f9; color:#475569;">${u.type}</span>
-              </div>
+              <strong>${u.name}</strong>
+              <span style="font-size:0.74rem; color:var(--theme-text-muted); margin-left:6px;">(${u.zone} · ${u.type})</span>
             </div>
-            <svg class="sheet-check-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            ${isSel ? '<span style="font-weight:bold;">✓</span>' : ''}
           </div>
         `;
       }).join("");
     }
 
-    function filterUnitBottomSheet() {
-      const q = document.getElementById("sheet-search").value;
-      renderBottomSheetList(q);
-    }
+    function selectUnitFromSheet(unitName) {
+      const u = app.units.find(item => item.name === unitName);
+      if (!u) return;
 
-    function selectUnitFromSheet(name) {
-      const unit = app.units.find(u => u.name === name);
-      if (!unit) return;
+      document.getElementById("input-unit").value = u.name;
+      document.getElementById("unit-trigger-label").innerText = `${u.name} (${u.zone} · ${u.type})`;
+      document.getElementById("unit-sheet-overlay").style.display = "none";
 
-      document.getElementById("input-unit").value = unit.name;
-      document.getElementById("capsule-selected-text").innerText = unit.name;
-      document.getElementById("capsule-selected-badge").innerText = unit.type;
-
-      if (unit.prefix && !editingComplaintId) {
-        choosePrefix(unit.prefix);
+      if (!editingComplaintId && u.prefix) {
+        choosePrefix(u.prefix);
       }
-      closeUnitBottomSheet();
       evaluateExactLocationDuplicates();
     }
 
-    function selectInitialUnit() {
-      if (app.units.length > 0) {
-        selectUnitFromSheet(app.units[0].name);
-      }
-    }
-
-    function sortUnitsList() {
+    function sortUnitsListAlphabetical() {
       app.units.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    function sortPresetsList() {
-      app.presets.sort((a, b) => a.localeCompare(b));
-    }
-
     /* ==========================================================================
-       BUILDING PREFIX & TEXT MODE CONTROLLER
+       ENTRY CONTROLS & PREFIX HANDLING
        ========================================================================== */
     function chooseSource(src) {
       app.source = src;
@@ -1967,6 +1572,7 @@
     function choosePrefix(p) {
       app.prefix = p;
       document.querySelectorAll(".prefix-switcher button").forEach(b => b.classList.remove("active"));
+      
       const bldgInput = document.getElementById("input-bldg");
       const headingLbl = document.getElementById("lbl-bldg-heading");
 
@@ -1978,12 +1584,12 @@
 
       if (p === "TEXT") {
         bldgInput.inputMode = "text";
-        bldgInput.placeholder = "e.g. Near Deep End Pool, Pump Room, Main Gate";
+        bldgInput.placeholder = "e.g. Near Deep End Pool, Pump Room";
         headingLbl.innerText = "Facility Landmark / Custom Location (Freeform Text)";
       } else {
         bldgInput.inputMode = "tel";
         bldgInput.placeholder = "e.g. 14/3 or 73/2";
-        headingLbl.innerText = "Building / Quarter / Post No";
+        headingLbl.innerText = "Facility Landmark / Building / Quarter";
       }
       evaluateExactLocationDuplicates();
     }
@@ -2006,8 +1612,9 @@
 
     function renderComplaintChips() {
       const container = document.getElementById("quick-complaint-chips");
-      sortPresetsList();
-      container.innerHTML = app.presets.map(p => {
+      // Alphabetically sorted presets
+      const sortedPresets = [...app.presets].sort((a, b) => a.localeCompare(b));
+      container.innerHTML = sortedPresets.map(p => {
         const isSelected = selectedComplaintChips.includes(p);
         return `<div class="chip ${isSelected ? 'active' : ''}" onclick="toggleComplaintChip('${p}')">
           ${isSelected ? '✓ ' : ''}${p}
@@ -2017,15 +1624,18 @@
 
     function toggleComplaintChip(text) {
       const index = selectedComplaintChips.indexOf(text);
-      if (index > -1) selectedComplaintChips.splice(index, 1);
-      else selectedComplaintChips.push(text);
+      if (index > -1) {
+        selectedComplaintChips.splice(index, 1);
+      } else {
+        selectedComplaintChips.push(text);
+      }
 
       document.getElementById("input-complaint").value = selectedComplaintChips.join(" & ");
       renderComplaintChips();
     }
 
     /* ==========================================================================
-       CONFIGURABLE DUPLICATE SCANNER (Exact Location: Unit + Bldg)
+       CONFIGURABLE DUPLICATE CHECK ENGINE
        ========================================================================== */
     function evaluateExactLocationDuplicates() {
       const bldgInput = document.getElementById("input-bldg").value.trim();
@@ -2039,29 +1649,26 @@
 
       const fullBldg = formatBldgDisplay(app.prefix, bldgInput);
       const selDate = new Date(document.getElementById("input-date").value);
-      const daysWindow = parseInt(app.settings.dupCheckDays) || 7;
+      const lookbackDays = parseInt(app.settings.dupDays) || 7;
       const pastLimit = new Date(selDate);
-      pastLimit.setDate(selDate.getDate() - daysWindow);
+      pastLimit.setDate(selDate.getDate() - lookbackDays);
 
       const matches = app.complaints.filter(c => {
         if (editingComplaintId && c.id === editingComplaintId) return false;
         const d = new Date(c.date);
-        return c.unit.trim().toUpperCase() === currentUnit &&
-               c.bldgNo.trim().toUpperCase() === fullBldg &&
-               d >= pastLimit && d <= selDate;
+        const matchUnit = c.unit.trim().toUpperCase() === currentUnit;
+        const matchBldg = c.bldgNo.trim().toUpperCase() === fullBldg;
+        return matchUnit && matchBldg && d >= pastLimit && d <= selDate;
       });
 
       if (matches.length > 0) {
         const dateList = matches.map(m => {
           const dt = new Date(m.date);
-          return `${String(dt.getDate()).padStart(2, '0')} ${dt.toLocaleString('en-US', { month: 'short' })} ${dt.getFullYear()}`;
-        }).filter((v, i, a) => a.indexOf(v) === i);
+          return `${String(dt.getDate()).padStart(2, '0')}/${String(dt.getMonth() + 1).padStart(2, '0')}`;
+        }).filter((val, idx, arr) => arr.indexOf(val) === idx);
 
-        const latest = matches[matches.length - 1];
         document.getElementById("balloon-text").innerHTML = 
-          `<strong>${currentUnit} (${fullBldg})</strong> registered within last ${daysWindow} days:<br>` +
-          `• Past Dates: <strong>${dateList.join(", ")}</strong><br>` +
-          `• Latest Issue: <em>${latest.complaint}</em>`;
+          `<strong>${currentUnit} (${fullBldg})</strong> registered previously on <strong>${dateList.join(", ")}</strong>`;
         balloon.style.display = "block";
       } else {
         balloon.style.display = "none";
@@ -2078,7 +1685,7 @@
     }
 
     /* ==========================================================================
-       RECORD PERSISTENCE & IN-PLACE EDITING
+       PERSISTENCE & COMPLAINT FORM
        ========================================================================== */
     function saveOrUpdateComplaint(e) {
       e.preventDefault();
@@ -2104,7 +1711,6 @@
           target.source = app.source;
         }
         cancelComplaintEdit();
-        showCustomAlert("Updated", "Complaint record updated successfully!");
       } else {
         const record = {
           id: "AGE-" + Date.now(),
@@ -2124,16 +1730,15 @@
         document.getElementById("input-mobile").value = "";
         selectedComplaintChips = [];
         renderComplaintChips();
-        showCustomAlert("Saved", "Complaint registered successfully!");
       }
 
       persistComplaints();
       document.getElementById("balloon-alert").style.display = "none";
-      renderComplaintsTreeView();
+      renderTodayTable();
       buildPrintableSlips();
       updateHistoryDisplay();
-      renderDayWiseSummaryMatrix();
       renderMonthlySummary();
+      renderDayWiseMatrix();
     }
 
     function startEditComplaint(id) {
@@ -2141,7 +1746,7 @@
       if (!c) return;
 
       editingComplaintId = id;
-      switchNav('tab-entry', document.querySelector("nav.bottom-nav button:nth-child(1)"));
+      switchNav('tab-entry', document.querySelector('nav.bottom-nav button:nth-child(1)'));
 
       document.getElementById("input-date").value = c.date;
       selectUnitFromSheet(c.unit);
@@ -2162,14 +1767,14 @@
       document.getElementById("btn-cancel-edit-complaint").style.display = "inline-flex";
       document.getElementById("complaint-edit-badge").style.display = "inline-block";
 
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo(0, 0);
     }
 
     function cancelComplaintEdit() {
       editingComplaintId = null;
       document.getElementById("form-heading-title").innerText = "Record Maintenance Complaint";
       document.getElementById("btn-submit-complaint").innerHTML = `
-        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         Save Complaint
       `;
       document.getElementById("btn-cancel-edit-complaint").style.display = "none";
@@ -2183,313 +1788,51 @@
       document.getElementById("balloon-alert").style.display = "none";
     }
 
-    async function removeComplaint(id) {
-      const confirmed = await showCustomConfirm("Delete Complaint", "Are you sure you want to delete this complaint record permanently?");
-      if (!confirmed) return;
-
-      if (editingComplaintId === id) cancelComplaintEdit();
-      app.complaints = app.complaints.filter(c => c.id !== id);
-      persistComplaints();
-      renderComplaintsTreeView();
-      buildPrintableSlips();
-      updateHistoryDisplay();
-      renderDayWiseSummaryMatrix();
-      renderMonthlySummary();
-    }
-
     function persistComplaints() {
       localStorage.setItem("age_v6_complaints", JSON.stringify(app.complaints));
     }
 
-    /* ==========================================================================
-       TREE VIEW CONTROLLER
-       ========================================================================== */
-    function renderComplaintsTreeView() {
-      const container = document.getElementById("tree-view-container");
-      const sortOrder = document.getElementById("tree-sort-order").value;
+    function renderTodayTable() {
+      const today = document.getElementById("input-date").value;
+      const tbody = document.getElementById("today-table-body");
+      const list = app.complaints.filter(c => c.date === today);
 
-      if (app.complaints.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:18px; color:var(--theme-text-muted);">No complaints recorded yet.</div>`;
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--theme-text-muted);">No entries yet for today.</td></tr>`;
         return;
       }
 
-      const dateGroups = {};
-      app.complaints.forEach(c => {
-        if (!dateGroups[c.date]) dateGroups[c.date] = {};
-        if (!dateGroups[c.date][c.zone]) dateGroups[c.date][c.zone] = {};
-        if (!dateGroups[c.date][c.zone][c.unit]) dateGroups[c.date][c.zone][c.unit] = [];
-        dateGroups[c.date][c.zone][c.unit].push(c);
-      });
-
-      const dates = Object.keys(dateGroups).sort((a, b) => b.localeCompare(a));
-
-      container.innerHTML = dates.map((date, idx) => {
-        const isLatest = idx === 0;
-        const zones = Object.keys(dateGroups[date]).sort();
-
-        const zoneHtml = zones.map(zone => {
-          let units = Object.keys(dateGroups[date][zone]);
-          if (sortOrder === "NAME") units.sort();
-
-          const unitHtml = units.map(unit => {
-            const list = dateGroups[date][zone][unit];
-            const leafHtml = list.map(item => `
-              <div class="tree-leaf-item">
-                <div>
-                  <strong>${item.bldgNo}</strong>: ${item.complaint}
-                  <div style="font-size:0.72rem; color:var(--theme-text-muted); margin-top:2px;">
-                    Source: <span class="badge-pill ${item.source === 'ARMAAN' ? 'pill-armaan' : 'pill-reg'}">${item.source}</span>
-                    ${item.mobile ? `&bull; Mob: ${item.mobile}` : ''}
-                  </div>
-                </div>
-                <div style="display:flex; gap:6px;">
-                  <button style="border:none;background:#e0f2fe;color:#0369a1;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;cursor:pointer;" onclick="startEditComplaint('${item.id}')">Edit ✏️</button>
-                  <button style="border:none;background:#fee2e2;color:#dc2626;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;cursor:pointer;" onclick="removeComplaint('${item.id}')">✕</button>
-                </div>
-              </div>
-            `).join("");
-
-            return `
-              <div class="tree-node" style="margin-left:8px; margin-top:6px;">
-                <div class="tree-header" onclick="this.parentElement.classList.toggle('expanded')">
-                  <div class="tree-title">
-                    <svg class="tree-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-                    <span>${unit}</span>
-                  </div>
-                  <span class="badge-pill" style="background:#e2e8f0; color:#334155;">${list.length}</span>
-                </div>
-                <div class="tree-content">${leafHtml}</div>
-              </div>
-            `;
-          }).join("");
-
-          return `
-            <div class="tree-node" style="margin-top:6px;">
-              <div class="tree-header" onclick="this.parentElement.classList.toggle('expanded')">
-                <div class="tree-title">
-                  <svg class="tree-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-                  <span>${zone}</span>
-                </div>
-              </div>
-              <div class="tree-content" style="padding:4px 8px;">${unitHtml}</div>
-            </div>
-          `;
-        }).join("");
-
-        return `
-          <div class="tree-node ${isLatest ? 'expanded' : ''}">
-            <div class="tree-header" onclick="this.parentElement.classList.toggle('expanded')">
-              <div class="tree-title">
-                <svg class="tree-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-                <span>📅 ${date}</span>
-              </div>
-            </div>
-            <div class="tree-content">${zoneHtml}</div>
-          </div>
-        `;
-      }).join("");
-    }
-
-    /* ==========================================================================
-       RESTORED EXECUTIVE DASHBOARD & DAY-WISE SUMMARY MATRIX
-       ========================================================================== */
-    function renderMonthlySummary() {
-      const selMonth = document.getElementById("summary-month-select").value;
-      if (!selMonth) return;
-
-      const monthEntries = app.complaints.filter(c => c.date.startsWith(selMonth));
-
-      document.getElementById("kpi-total").innerText = monthEntries.length;
-      document.getElementById("kpi-reg").innerText = monthEntries.filter(c => c.source === "REGISTER").length;
-      document.getElementById("kpi-armaan").innerText = monthEntries.filter(c => c.source === "ARMAAN").length;
-      document.getElementById("kpi-z3").innerText = monthEntries.filter(c => c.zone === "Zone-III").length;
-      document.getElementById("kpi-z4").innerText = monthEntries.filter(c => c.zone === "Zone-IV").length;
-
-      const map = {};
-      app.units.forEach(u => {
-        map[u.name] = { zone: u.zone, type: u.type, reg: 0, arm: 0, total: 0 };
-      });
-
-      monthEntries.forEach(item => {
-        if (!map[item.unit]) {
-          map[item.unit] = { zone: item.zone, type: item.type || "OTM", reg: 0, arm: 0, total: 0 };
-        }
-        if (item.source === "ARMAAN") map[item.unit].arm++;
-        else map[item.unit].reg++;
-        map[item.unit].total++;
-      });
-
-      const tbody = document.getElementById("summary-breakdown-body");
-      const rows = Object.keys(map).map(unitName => {
-        const d = map[unitName];
-        if (d.total === 0) return "";
-        return `
-          <tr>
-            <td><strong>${unitName}</strong></td>
-            <td><span class="badge-pill" style="background:#f1f5f9; color:#475569;">${d.type}</span></td>
-            <td>${d.zone}</td>
-            <td>${d.reg}</td>
-            <td>${d.arm}</td>
-            <td><strong>${d.total}</strong></td>
-          </tr>
-        `;
-      }).filter(Boolean);
-
-      tbody.innerHTML = rows.length > 0 ? rows.join("") : `<tr><td colspan="6" style="text-align:center; color: var(--theme-text-muted);">No records registered in ${selMonth}.</td></tr>`;
-    }
-
-    function renderDayWiseSummaryMatrix() {
-      const targetDate = document.getElementById("summary-day-select").value;
-      const dayList = app.complaints.filter(c => c.date === targetDate);
-
-      const z3SecA = dayList.filter(c => c.zone === "Zone-III" && c.unit.toUpperCase().includes("SEC 'A'")).length;
-      const z3OTM = dayList.filter(c => c.zone === "Zone-III" && !c.unit.toUpperCase().includes("SEC 'A'")).length;
-      document.getElementById("day-z3-seca").innerText = z3SecA;
-      document.getElementById("day-z3-otm").innerText = z3OTM;
-
-      const z4SecB = dayList.filter(c => c.zone === "Zone-IV" && c.unit.toUpperCase().includes("SEC 'B'")).length;
-      const z4SecC = dayList.filter(c => c.zone === "Zone-IV" && c.unit.toUpperCase().includes("SEC 'C'")).length;
-      const z4Inst = dayList.filter(c => c.zone === "Zone-IV" && c.type === "INSTITUTE").length;
-      const z4OTM = dayList.filter(c => c.zone === "Zone-IV" && c.type === "OTM" && !c.unit.toUpperCase().includes("SEC 'B'") && !c.unit.toUpperCase().includes("SEC 'C'")).length;
-      document.getElementById("day-z4-secb").innerText = z4SecB;
-      document.getElementById("day-z4-secc").innerText = z4SecC;
-      document.getElementById("day-z4-inst").innerText = z4Inst;
-      document.getElementById("day-z4-otm").innerText = z4OTM;
-
-      const armSecA = dayList.filter(c => c.source === "ARMAAN" && c.unit.toUpperCase().includes("SEC 'A'")).length;
-      const armSecB = dayList.filter(c => c.source === "ARMAAN" && c.unit.toUpperCase().includes("SEC 'B'")).length;
-      const armSecC = dayList.filter(c => c.source === "ARMAAN" && c.unit.toUpperCase().includes("SEC 'C'")).length;
-      const armZ3OTM = dayList.filter(c => c.source === "ARMAAN" && c.zone === "Zone-III" && !c.unit.toUpperCase().includes("SEC 'A'")).length;
-      const armZ4OTM = dayList.filter(c => c.source === "ARMAAN" && c.zone === "Zone-IV" && !c.unit.toUpperCase().includes("SEC 'B'") && !c.unit.toUpperCase().includes("SEC 'C'")).length;
-      document.getElementById("day-arm-seca").innerText = armSecA;
-      document.getElementById("day-arm-secb").innerText = armSecB;
-      document.getElementById("day-arm-secc").innerText = armSecC;
-      document.getElementById("day-arm-z3otm").innerText = armZ3OTM;
-      document.getElementById("day-arm-z4otm").innerText = armZ4OTM;
-    }
-
-    /* ==========================================================================
-       CONTRACTORS DIRECTORY CONTROLLER
-       ========================================================================== */
-    function renderContractorsTable() {
-      const tbody = document.getElementById("contractors-table-body");
-      tbody.innerHTML = app.contractors.map((c, i) => `
-        <tr>
-          <td><strong>${c.name}</strong></td>
-          <td>${c.person || '-'}</td>
-          <td>${c.phone || '-'}</td>
-          <td><span class="badge-pill" style="background:#e0f2fe; color:#0369a1;">${c.zone}</span></td>
+      tbody.innerHTML = list.map(c => `
+        <tr style="${editingComplaintId === c.id ? 'background:#fffbeb;' : ''}">
+          <td><strong>${c.zone}</strong></td>
+          <td>${c.unit}</td>
+          <td>${c.bldgNo}</td>
+          <td>${c.complaint}</td>
+          <td><span class="badge-pill ${c.source === 'ARMAAN' ? 'pill-armaan' : 'pill-reg'}">${c.source}</span></td>
           <td style="text-align:center;">
-            <button style="border:none;background:#fee2e2;color:#dc2626;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;cursor:pointer;" onclick="deleteContractor(${i})">✕</button>
+            <button style="border:none;background:#e0f2fe;color:#0369a1;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-right:4px;" onclick="startEditComplaint('${c.id}')">Edit ✏️</button>
+            <button style="border:none;background:#fee2e2;color:var(--theme-primary);padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.75rem;cursor:pointer;" onclick="removeComplaint('${c.id}')">✕</button>
           </td>
         </tr>
       `).join("");
     }
 
-    function addOrUpdateContractor() {
-      const name = document.getElementById("add-con-name").value.trim();
-      const person = document.getElementById("add-con-person").value.trim();
-      const phone = document.getElementById("add-con-phone").value.trim();
-      const zone = document.getElementById("add-con-zone").value;
-
-      if (!name) return showCustomAlert("Required", "Contractor firm name is required.");
-
-      app.contractors.push({ id: "CON-" + Date.now(), name, person, phone, zone });
-      localStorage.setItem("age_v6_contractors", JSON.stringify(app.contractors));
-      renderContractorsTable();
-
-      document.getElementById("add-con-name").value = "";
-      document.getElementById("add-con-person").value = "";
-      document.getElementById("add-con-phone").value = "";
-      showCustomAlert("Added", `Contractor "${name}" registered.`);
-    }
-
-    async function deleteContractor(idx) {
-      const confirmed = await showCustomConfirm("Delete Contractor", `Delete contractor "${app.contractors[idx].name}"?`);
-      if (!confirmed) return;
-      app.contractors.splice(idx, 1);
-      localStorage.setItem("age_v6_contractors", JSON.stringify(app.contractors));
-      renderContractorsTable();
+    function removeComplaint(id) {
+      triggerAppConfirm("Delete Complaint", "Are you sure you want to delete this recorded complaint?", (confirmed) => {
+        if (!confirmed) return;
+        if (editingComplaintId === id) cancelComplaintEdit();
+        app.complaints = app.complaints.filter(c => c.id !== id);
+        persistComplaints();
+        renderTodayTable();
+        buildPrintableSlips();
+        updateHistoryDisplay();
+        renderMonthlySummary();
+        renderDayWiseMatrix();
+      });
     }
 
     /* ==========================================================================
-       UNITS & CENTRAL AMENITIES DIRECTORY CONTROLLER
-       ========================================================================== */
-    function renderUnitsTable() {
-      const tbody = document.getElementById("units-table-body");
-      tbody.innerHTML = app.units.map((u, i) => `
-        <tr style="${editingUnitIndex === i ? 'background: #fffbeb;' : ''}">
-          <td><strong>${u.name}</strong></td>
-          <td>${u.zone}</td>
-          <td><span class="badge-pill" style="background:#e0f2fe; color:#0369a1;">${u.type}</span></td>
-          <td>${u.prefix === 'POST' ? 'Post No.' : (u.prefix === 'TEXT' ? 'TEXT' : u.prefix + '-')}</td>
-          <td style="text-align:center;">
-            <button style="border:none;background:#fee2e2;color:#dc2626;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;cursor:pointer;" onclick="deleteUnitMapping(${i})">✕</button>
-          </td>
-        </tr>
-      `).join("");
-    }
-
-    function handleUnitFormSubmit() {
-      const name = document.getElementById("add-unit-name").value.trim().toUpperCase();
-      const zone = document.getElementById("add-unit-zone").value;
-      const type = document.getElementById("add-unit-type").value;
-      const prefix = document.getElementById("add-unit-pref").value;
-
-      if (!name) return showCustomAlert("Required", "Unit or facility name is required.");
-      if (app.units.some(u => u.name === name)) return showCustomAlert("Duplicate", `"${name}" already exists.`);
-
-      app.units.push({ name, zone, type, prefix });
-      sortUnitsList();
-      localStorage.setItem("age_v6_units", JSON.stringify(app.units));
-      renderUnitsTable();
-      document.getElementById("add-unit-name").value = "";
-      showCustomAlert("Added", `Unit "${name}" added.`);
-    }
-
-    async function deleteUnitMapping(idx) {
-      const confirmed = await showCustomConfirm("Delete Unit", `Delete "${app.units[idx].name}"?`);
-      if (!confirmed) return;
-      app.units.splice(idx, 1);
-      localStorage.setItem("age_v6_units", JSON.stringify(app.units));
-      renderUnitsTable();
-    }
-
-    function renderPresetChipsInSettings() {
-      const container = document.getElementById("settings-presets-container");
-      sortPresetsList();
-      container.innerHTML = app.presets.map((p, idx) => `
-        <div class="chip">
-          <span>${p}</span>
-          <span style="color:#dc2626;margin-left:4px;font-weight:bold;cursor:pointer;" onclick="deletePreset(${idx})">✕</span>
-        </div>
-      `).join("");
-    }
-
-    function addNewComplaintPreset() {
-      const input = document.getElementById("new-preset-text");
-      const val = input.value.trim().toUpperCase();
-      if (!val) return;
-      if (!app.presets.includes(val)) {
-        app.presets.push(val);
-        sortPresetsList();
-        localStorage.setItem("age_v6_presets", JSON.stringify(app.presets));
-        renderPresetChipsInSettings();
-        renderComplaintChips();
-      }
-      input.value = "";
-    }
-
-    function deletePreset(index) {
-      app.presets.splice(index, 1);
-      sortPresetsList();
-      localStorage.setItem("age_v6_presets", JSON.stringify(app.presets));
-      renderPresetChipsInSettings();
-      renderComplaintChips();
-    }
-
-    /* ==========================================================================
-       ISOLATED PDF & PRINT ENGINE (Strict Vector Standard)
+       ISOLATED PDF & SLIPS ENGINE (UNCHANGED ARCHITECTURE)
        ========================================================================== */
     function getSortedZoneComplaints(dayList, targetZone) {
       const zoneItems = dayList.filter(c => c.zone === targetZone);
@@ -2506,14 +1849,14 @@
 
       const otms = zoneItems.filter(c => !sectors.includes(c) && !institutes.includes(c));
 
-      const sortFunction = (a, b) => {
+      const sortFn = (a, b) => {
         if (a.unit !== b.unit) return a.unit.localeCompare(b.unit);
         return a.bldgNo.localeCompare(b.bldgNo, undefined, { numeric: true, sensitivity: 'base' });
       };
 
-      sectors.sort(sortFunction);
-      institutes.sort(sortFunction);
-      otms.sort(sortFunction);
+      sectors.sort(sortFn);
+      institutes.sort(sortFn);
+      otms.sort(sortFn);
 
       return [...sectors, ...institutes, ...otms];
     }
@@ -2529,6 +1872,7 @@
       let out = "";
       out += renderZoneSheets(app.settings.z3SectorHeader, z3Sorted, chosenDate, app.settings.z3Contractor);
       out += renderZoneSheets(app.settings.z4SectorHeader, z4Sorted, chosenDate, app.settings.z4Contractor);
+
       container.innerHTML = out;
     }
 
@@ -2620,7 +1964,9 @@
                   <th style="width: 11%;">Sign of Indl</th>
                 </tr>
               </thead>
-              <tbody>${rows}</tbody>
+              <tbody>
+                ${rows}
+              </tbody>
             </table>
           </div>
         </div>
@@ -2644,7 +1990,12 @@
 
       try {
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4", compress: true });
+        const doc = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: "a4",
+          compress: true
+        });
 
         const dayList = app.complaints.filter(c => c.date === targetDate);
         const z3Sorted = getSortedZoneComplaints(dayList, "Zone-III");
@@ -2681,7 +2032,7 @@
           doc.save(fileName);
         }
       } catch (err) {
-        showCustomAlert("PDF Error", err.message);
+        triggerAppAlert("Vector PDF Error", err.message);
       }
     }
 
@@ -2706,7 +2057,9 @@
         const item = list[i];
         if (item) {
           let bldgText = item.bldgNo;
-          if (item.source === "ARMAAN") bldgText += `\n★ ${app.settings.armaanLabel} ★`;
+          if (item.source === "ARMAAN") {
+            bldgText += `\n★ ${app.settings.armaanLabel} ★`;
+          }
           tableRows.push([
             String(startSNo + i).padStart(2, "0"),
             item.unit,
@@ -2762,7 +2115,7 @@
     }
 
     /* ==========================================================================
-       TOUCH PINCH-TO-ZOOM PREVIEW
+       TOUCH PINCH-TO-ZOOM
        ========================================================================== */
     function initPinchToZoom() {
       const wrapper = document.getElementById("scroll-wrapper");
@@ -2771,14 +2124,20 @@
 
       wrapper.addEventListener("touchstart", (e) => {
         if (e.touches.length === 2) {
-          startDistance = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+          startDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
           startZoom = currentZoom;
         }
       }, { passive: true });
 
       wrapper.addEventListener("touchmove", (e) => {
         if (e.touches.length === 2 && startDistance > 0) {
-          const currentDistance = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+          const currentDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+          );
           const factor = currentDistance / startDistance;
           currentZoom = Math.min(Math.max(startZoom * factor, 0.25), 1.8);
           applyZoom();
@@ -2817,6 +2176,94 @@
     }
 
     /* ==========================================================================
+       SUMMARY DASHBOARD & DAY-WISE MATRIX
+       ========================================================================== */
+    function renderMonthlySummary() {
+      const selMonth = document.getElementById("summary-month-select").value;
+      if (!selMonth) return;
+
+      const monthEntries = app.complaints.filter(c => c.date.startsWith(selMonth));
+
+      document.getElementById("kpi-total").innerText = monthEntries.length;
+      document.getElementById("kpi-reg").innerText = monthEntries.filter(c => c.source === "REGISTER").length;
+      document.getElementById("kpi-armaan").innerText = monthEntries.filter(c => c.source === "ARMAAN").length;
+      document.getElementById("kpi-z3").innerText = monthEntries.filter(c => c.zone === "Zone-III").length;
+      document.getElementById("kpi-z4").innerText = monthEntries.filter(c => c.zone === "Zone-IV").length;
+
+      const map = {};
+      app.units.forEach(u => {
+        map[u.name] = { zone: u.zone, type: u.type, reg: 0, arm: 0, total: 0 };
+      });
+
+      monthEntries.forEach(item => {
+        if (!map[item.unit]) {
+          map[item.unit] = { zone: item.zone, type: item.type || "OTM", reg: 0, arm: 0, total: 0 };
+        }
+        if (item.source === "ARMAAN") {
+          map[item.unit].arm++;
+        } else {
+          map[item.unit].reg++;
+        }
+        map[item.unit].total++;
+      });
+
+      const tbody = document.getElementById("summary-breakdown-body");
+      const rows = Object.keys(map).map(unitName => {
+        const d = map[unitName];
+        if (d.total === 0) return "";
+        return `
+          <tr>
+            <td><strong>${unitName}</strong></td>
+            <td><span class="badge-pill" style="background:#f1f5f9; color:#475569;">${d.type}</span></td>
+            <td>${d.zone}</td>
+            <td>${d.reg}</td>
+            <td>${d.arm}</td>
+            <td><strong>${d.total}</strong></td>
+          </tr>
+        `;
+      }).filter(Boolean);
+
+      tbody.innerHTML = rows.length === 0 
+        ? `<tr><td colspan="6" style="text-align:center; color: var(--theme-text-muted);">No records registered in ${selMonth}.</td></tr>`
+        : rows.join("");
+    }
+
+    function renderDayWiseMatrix() {
+      const selDate = document.getElementById("summary-day-select").value;
+      const dayList = app.complaints.filter(c => c.date === selDate);
+
+      let z3Sec = 0, z3Otm = 0;
+      let armSecA = 0, armSecB = 0, armSecC = 0, armZ3Otm = 0, armZ4Otm = 0;
+
+      dayList.forEach(c => {
+        const u = app.units.find(item => item.name === c.unit);
+        const type = u ? u.type : c.type;
+        const zone = u ? u.zone : c.zone;
+
+        if (zone === "Zone-III") {
+          if (type === "SECTOR") z3Sec++;
+          else z3Otm++;
+        }
+
+        if (c.source === "ARMAAN") {
+          if (c.unit.includes("SEC 'A'")) armSecA++;
+          else if (c.unit.includes("SEC 'B'")) armSecB++;
+          else if (c.unit.includes("SEC 'C'")) armSecC++;
+          else if (zone === "Zone-III") armZ3Otm++;
+          else if (zone === "Zone-IV") armZ4Otm++;
+        }
+      });
+
+      document.getElementById("day-z3-sec").innerText = z3Sec;
+      document.getElementById("day-z3-otm").innerText = z3Otm;
+      document.getElementById("day-arm-seca").innerText = armSecA;
+      document.getElementById("day-arm-secb").innerText = armSecB;
+      document.getElementById("day-arm-secc").innerText = armSecC;
+      document.getElementById("day-arm-z3otm").innerText = armZ3Otm;
+      document.getElementById("day-arm-z4otm").innerText = armZ4Otm;
+    }
+
+    /* ==========================================================================
        HISTORY ARCHIVE VIEW
        ========================================================================== */
     function updateHistoryDisplay() {
@@ -2845,65 +2292,236 @@
           <td>${c.mobile || '-'}</td>
           <td><span class="badge-pill ${c.source === 'ARMAAN' ? 'pill-armaan' : 'pill-reg'}">${c.source}</span></td>
           <td style="text-align:center;">
-            <button style="border:none;background:#e0f2fe;color:#0369a1;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;cursor:pointer;margin-right:4px;" onclick="startEditComplaint('${c.id}')">Edit ✏️</button>
-            <button style="border:none;background:#fee2e2;color:#dc2626;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.72rem;cursor:pointer;" onclick="removeComplaint('${c.id}')">✕</button>
+            <button style="border:none;background:#e0f2fe;color:#0369a1;padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.75rem;cursor:pointer;margin-right:4px;" onclick="startEditComplaint('${c.id}')">Edit ✏️</button>
+            <button style="border:none;background:#fee2e2;color:var(--theme-primary);padding:4px 8px;border-radius:4px;font-weight:700;font-size:0.75rem;cursor:pointer;" onclick="removeComplaint('${c.id}')">✕</button>
           </td>
         </tr>
       `).join("");
     }
 
     /* ==========================================================================
-       DUAL EXPORT: EXCEL CSV & JSON
+       PRESETS MANAGER
        ========================================================================== */
-    function exportToExcelCSV() {
-      if (app.complaints.length === 0) return showCustomAlert("Empty", "No complaint records to export.");
-
-      const headers = ["ID", "Date", "Zone", "Unit", "Category", "Building/Location", "Complaint Nature", "Source", "Mobile No"];
-      const rows = app.complaints.map(c => [
-        `"${c.id}"`,
-        `"${c.date}"`,
-        `"${c.zone}"`,
-        `"${c.unit}"`,
-        `"${c.type || 'OTM'}"`,
-        `"${c.bldgNo}"`,
-        `"${c.complaint.replace(/"/g, '""')}"`,
-        `"${c.source}"`,
-        `"${c.mobile || ''}"`
-      ]);
-
-      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(e => e.join(","))].join("\r\n");
-      const fileName = `AGE_BR2_COMPLAINTS_${new Date().toISOString().split("T")[0]}.csv`;
-
-      if (typeof AndroidBridge !== "undefined" && AndroidBridge.shareFile) {
-        const base64Str = btoa(unescape(encodeURIComponent(csvContent)));
-        AndroidBridge.shareFile(base64Str, fileName, "AGE Complaints Spreadsheet", "text/csv");
-      } else {
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
+    function renderPresetChipsInSettings() {
+      const container = document.getElementById("settings-presets-container");
+      const sortedPresets = [...app.presets].sort((a, b) => a.localeCompare(b));
+      container.innerHTML = sortedPresets.map(p => `
+        <div class="chip">
+          <span>${p}</span>
+          <span style="color:var(--theme-primary);margin-left:4px;font-weight:bold;cursor:pointer;" onclick="deletePreset('${p}')">✕</span>
+        </div>
+      `).join("");
     }
 
+    function addNewComplaintPreset() {
+      const input = document.getElementById("new-preset-text");
+      const val = input.value.trim().toUpperCase();
+      if (!val) return;
+      if (!app.presets.includes(val)) {
+        app.presets.push(val);
+        localStorage.setItem("age_v6_presets", JSON.stringify(app.presets));
+        renderPresetChipsInSettings();
+        renderComplaintChips();
+      }
+      input.value = "";
+    }
+
+    function deletePreset(presetName) {
+      app.presets = app.presets.filter(p => p !== presetName);
+      localStorage.setItem("age_v6_presets", JSON.stringify(app.presets));
+      renderPresetChipsInSettings();
+      renderComplaintChips();
+    }
+
+    /* ==========================================================================
+       UNITS & FACILITIES CONFIGURATION
+       ========================================================================== */
+    function renderUnitsTable() {
+      const tbody = document.getElementById("units-table-body");
+      tbody.innerHTML = app.units.map((u, i) => `
+        <tr style="${editingUnitIndex === i ? 'background: #fffbeb;' : ''}">
+          <td><strong>${u.name}</strong></td>
+          <td>${u.zone}</td>
+          <td><span class="badge-pill" style="background:#e0f2fe; color:#0369a1;">${u.type}</span></td>
+          <td>${u.prefix === 'POST' ? 'Post No.' : (u.prefix === 'TEXT' ? 'TEXT' : u.prefix + '-')}</td>
+          <td style="text-align:center;">
+            <button style="border:none; background:#e0f2fe; color:#0369a1; padding:4px 8px; border-radius:4px; font-weight:700; font-size:0.75rem; cursor:pointer; margin-right:4px;" onclick="startEditUnit(${i})">Edit ✏️</button>
+            <button style="border:none; background:#fee2e2; color:var(--theme-primary); padding:4px 8px; border-radius:4px; font-weight:700; font-size:0.75rem; cursor:pointer;" onclick="deleteUnitMapping(${i})">✕</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function startEditUnit(index) {
+      editingUnitIndex = index;
+      const unit = app.units[index];
+
+      document.getElementById("add-unit-name").value = unit.name;
+      document.getElementById("add-unit-zone").value = unit.zone;
+      document.getElementById("add-unit-type").value = unit.type;
+      document.getElementById("add-unit-pref").value = unit.prefix;
+
+      const submitBtn = document.getElementById("btn-save-unit");
+      submitBtn.innerText = "Update Unit ✓";
+      submitBtn.style.background = "#15803d";
+
+      document.getElementById("btn-cancel-unit-edit").style.display = "inline-flex";
+      document.getElementById("unit-edit-badge").style.display = "inline-block";
+      renderUnitsTable();
+    }
+
+    function cancelUnitEdit() {
+      editingUnitIndex = -1;
+      document.getElementById("add-unit-name").value = "";
+      document.getElementById("add-unit-zone").value = "Zone-III";
+      document.getElementById("add-unit-type").value = "SECTOR";
+      document.getElementById("add-unit-pref").value = "P";
+
+      const submitBtn = document.getElementById("btn-save-unit");
+      submitBtn.innerText = "Add Unit";
+      submitBtn.style.background = "var(--theme-primary)";
+
+      document.getElementById("btn-cancel-unit-edit").style.display = "none";
+      document.getElementById("unit-edit-badge").style.display = "none";
+      renderUnitsTable();
+    }
+
+    function handleUnitFormSubmit() {
+      const name = document.getElementById("add-unit-name").value.trim().toUpperCase();
+      const zone = document.getElementById("add-unit-zone").value;
+      const type = document.getElementById("add-unit-type").value;
+      const prefix = document.getElementById("add-unit-pref").value;
+
+      if (!name) return triggerAppAlert("Validation", "Please enter unit/facility name.");
+
+      if (editingUnitIndex >= 0) {
+        const oldName = app.units[editingUnitIndex].name;
+        if (oldName !== name) {
+          app.complaints.forEach(c => {
+            if (c.unit.toUpperCase() === oldName.toUpperCase()) {
+              c.unit = name;
+              c.zone = zone;
+              c.type = type;
+            }
+          });
+          persistComplaints();
+        }
+        app.units[editingUnitIndex] = { name, zone, type, prefix };
+        cancelUnitEdit();
+      } else {
+        const duplicate = app.units.find(u => u.name.toUpperCase() === name);
+        if (duplicate) return triggerAppAlert("Duplicate", `Unit "${name}" already exists!`);
+
+        app.units.push({ name, zone, type, prefix });
+        document.getElementById("add-unit-name").value = "";
+      }
+
+      sortUnitsListAlphabetical();
+      localStorage.setItem("age_v6_units", JSON.stringify(app.units));
+      renderUnitsTable();
+      renderTodayTable();
+      updateHistoryDisplay();
+      buildPrintableSlips();
+      renderMonthlySummary();
+      renderDayWiseMatrix();
+    }
+
+    function deleteUnitMapping(idx) {
+      triggerAppConfirm("Delete Unit", `Delete unit "${app.units[idx].name}"?`, (confirmed) => {
+        if (!confirmed) return;
+        if (editingUnitIndex === idx) cancelUnitEdit();
+        app.units.splice(idx, 1);
+        localStorage.setItem("age_v6_units", JSON.stringify(app.units));
+        renderUnitsTable();
+      });
+    }
+
+    /* ==========================================================================
+       SETTINGS MANAGEMENT
+       ========================================================================== */
+    function loadSettingsToUI() {
+      document.getElementById("cfg-slip-header").value = app.settings.header;
+      document.getElementById("cfg-z3-header-sector").value = app.settings.z3SectorHeader;
+      document.getElementById("cfg-z4-header-sector").value = app.settings.z4SectorHeader;
+      document.getElementById("cfg-armaan-style").value = app.settings.armaanStyle;
+      document.getElementById("cfg-ui-theme").value = app.settings.uiTheme;
+      document.getElementById("cfg-dup-days").value = app.settings.dupDays;
+    }
+
+    function saveMasterSettings() {
+      app.settings.header = document.getElementById("cfg-slip-header").value.trim();
+      app.settings.z3SectorHeader = document.getElementById("cfg-z3-header-sector").value.trim();
+      app.settings.z4SectorHeader = document.getElementById("cfg-z4-header-sector").value.trim();
+      app.settings.armaanStyle = document.getElementById("cfg-armaan-style").value;
+      app.settings.dupDays = parseInt(document.getElementById("cfg-dup-days").value) || 7;
+
+      localStorage.setItem("age_v6_cfg", JSON.stringify(app.settings));
+      triggerAppAlert("Settings", "Settings saved successfully!");
+      buildPrintableSlips();
+    }
+
+    /* ==========================================================================
+       IN-APP DIALOGS & CODE UPDATER
+       ========================================================================== */
+    function triggerAppAlert(title, message) {
+      document.getElementById("modal-dialog-title").innerText = title;
+      document.getElementById("modal-dialog-message").innerText = message;
+      document.getElementById("modal-btn-cancel").style.display = "none";
+      document.getElementById("custom-modal-dialog").style.display = "flex";
+      dialogCallback = null;
+    }
+
+    function triggerAppConfirm(title, message, callback) {
+      document.getElementById("modal-dialog-title").innerText = title;
+      document.getElementById("modal-dialog-message").innerText = message;
+      document.getElementById("modal-btn-cancel").style.display = "inline-flex";
+      document.getElementById("custom-modal-dialog").style.display = "flex";
+      dialogCallback = callback;
+    }
+
+    function closeAppDialog(result) {
+      document.getElementById("custom-modal-dialog").style.display = "none";
+      if (dialogCallback) dialogCallback(result);
+    }
+
+    function handleAppCodeUpdate(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const newHtml = evt.target.result;
+        if (!newHtml.includes("AGE B/R-II")) {
+          return triggerAppAlert("Invalid File", "Please select a valid index.html application file.");
+        }
+
+        if (typeof AndroidBridge !== "undefined" && AndroidBridge.updateAppCode) {
+          AndroidBridge.updateAppCode(newHtml);
+        } else {
+          triggerAppAlert("Browser Mode", "Code read successfully. Reload to apply.");
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    /* ==========================================================================
+       BACKUP & RESTORE (JSON + EXCEL CSV)
+       ========================================================================== */
     function exportDataToFile() {
       const payload = {
         complaints: app.complaints,
         units: app.units,
-        contractors: app.contractors,
         presets: app.presets,
         settings: app.settings,
         exportedAt: new Date().toISOString()
       };
 
       const jsonStr = JSON.stringify(payload, null, 2);
-      const fileName = `AGE_BR2_BACKUP_${new Date().toISOString().split("T")[0]}.json`;
+      const fileName = `AGE_BR2_COMPLAINTS_${new Date().toISOString().split("T")[0]}.json`;
 
       if (typeof AndroidBridge !== "undefined" && AndroidBridge.shareFile) {
         const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
-        AndroidBridge.shareFile(base64Str, fileName, "AGE Database Backup", "application/json");
+        AndroidBridge.shareFile(base64Str, fileName, "AGE Complaint Database Backup", "application/json");
       } else {
         const blob = new Blob([jsonStr], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -2915,6 +2533,26 @@
       }
     }
 
+    function exportDataToExcelCSV() {
+      if (app.complaints.length === 0) {
+        return triggerAppAlert("Export", "No complaints recorded to export.");
+      }
+
+      let csv = "\uFEFFDate,Zone,Unit,Building No,Nature of Complaint,Mobile,Source\n";
+      app.complaints.forEach(c => {
+        csv += `"${c.date}","${c.zone}","${c.unit}","${c.bldgNo}","${c.complaint}","${c.mobile || ''}","${c.source}"\n`;
+      });
+
+      const fileName = `AGE_BR2_COMPLAINTS_${new Date().toISOString().split("T")[0]}.csv`;
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     function importDataFromFile(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -2924,7 +2562,7 @@
         try {
           const parsed = JSON.parse(evt.target.result);
           if (!parsed.complaints || !Array.isArray(parsed.complaints)) {
-            throw new Error("Invalid backup file: complaints array missing.");
+            throw new Error("Invalid file structure.");
           }
 
           const getFingerprint = (item) => [
@@ -2938,57 +2576,29 @@
           const existingIdSet = new Set(app.complaints.map(c => c.id));
           const existingFpSet = new Set(app.complaints.map(getFingerprint));
 
-          let addedCount = 0;
-          let skippedCount = 0;
-
+          let added = 0;
           parsed.complaints.forEach(item => {
             const fp = getFingerprint(item);
-            if (existingIdSet.has(item.id) || existingFpSet.has(fp)) {
-              skippedCount++;
-            } else {
+            if (!existingIdSet.has(item.id) && !existingFpSet.has(fp)) {
               app.complaints.push(item);
               existingIdSet.add(item.id);
               existingFpSet.add(fp);
-              addedCount++;
+              added++;
             }
           });
 
           persistComplaints();
-          renderComplaintsTreeView();
+          renderTodayTable();
           updateHistoryDisplay();
           buildPrintableSlips();
-          renderDayWiseSummaryMatrix();
           renderMonthlySummary();
+          renderDayWiseMatrix();
 
           e.target.value = "";
-          showCustomAlert("Sync Complete", `Merged ${addedCount} new complaint(s). Skipped ${skippedCount} duplicate(s).`);
+          triggerAppAlert("Sync Complete", `${added} new complaint(s) merged successfully.`);
         } catch (err) {
-          showCustomAlert("Import Error", err.message);
+          triggerAppAlert("Import Error", err.message);
           e.target.value = "";
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function saveMasterSettings() {
-      app.settings.dupCheckDays = parseInt(document.getElementById("cfg-dup-days").value) || 7;
-      localStorage.setItem("age_v6_cfg", JSON.stringify(app.settings));
-    }
-
-    function handleAppCodeUpdate(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const newHtml = evt.target.result;
-        if (!newHtml.includes("AGE B/R-II")) {
-          return showCustomAlert("Error", "Invalid file. Select a valid index.html application file.");
-        }
-        if (typeof AndroidBridge !== "undefined" && AndroidBridge.updateAppCode) {
-          AndroidBridge.updateAppCode(newHtml);
-        } else {
-          showCustomAlert("Updated", "Code loaded into memory. Refresh browser to apply.");
         }
       };
       reader.readAsText(file);
